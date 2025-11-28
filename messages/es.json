@@ -1,0 +1,256 @@
+{
+  "UIStrings": {
+    "appTitle": "Verificador de Tipo NAT",
+    "appDescription": "Descubra el tipo de NAT de su red y aprenda cómo afecta los juegos, aplicaciones P2P y la conectividad.",
+    "privacyNote": "Toda la detección ocurre en su navegador. No se envían datos a servidores.",
+    "detectingNATType": "Detectando tipo NAT",
+    "analyzingNetwork": "Analizando la configuración de su red usando servidores STUN...",
+    "gatheringICECandidates": "Recopilando candidatos ICE",
+    "detectionTimeInfo": "Esto suele tomar 3-10 segundos. Tiempo máximo de espera: 15 segundos.",
+    "startDetection": "Iniciar detección",
+    "retestNATType": "Volver a probar tipo NAT",
+    "readyToDetect": "Listo para detectar su tipo NAT",
+    "footerInfo": "Esta herramienta utiliza el protocolo WebRTC STUN para analizar la configuración de su red.",
+    "detectionComplete": "Detección completada",
+    "natTypeIdentified": "Su tipo NAT ha sido identificado exitosamente",
+    "natTypeLabel": "Tipo NAT",
+    "publicIPAddress": "Su dirección IP pública",
+    "cgnatDetected": "CGNAT detectado (RFC 6598) - Puede afectar la conectividad",
+    "detectionTime": "Tiempo de detección",
+    "stunServerUsed": "Servidor STUN utilizado",
+    "stunServer": "Servidor STUN",
+    "lastTested": "Última prueba",
+    "advancedDetails": "Detalles avanzados",
+    "applicationImpact": "Impacto de aplicaciones",
+    "learnMore": "Aprender más",
+    "hideAdditionalInfo": "Ocultar información adicional",
+    "showAdditionalInfo": "Mostrar información adicional",
+    "technicalDetails": "Detalles técnicos",
+    "realWorldExamples": "Ejemplos del mundo real",
+    "troubleshootingTips": "Consejos de solución de problemas",
+    "comparison": "Comparación",
+    "impactExcellent": "Excelente",
+    "impactModerate": "Moderado",
+    "impactLimited": "Limitado",
+    "gaming": "Juegos",
+    "p2pFileSharing": "Compartir archivos P2P",
+    "videoCalls": "Videollamadas",
+    "remoteAccess": "Acceso remoto",
+    "viewAllNATTypes": "Ver todos los tipos de NAT",
+    "otherNATTypes": "Tipos de NAT",
+    "otherNATTypesDescription": "Aprenda sobre los diferentes tipos de NAT y cómo afectan su conectividad."
+  },
+  "ErrorMessages": {
+    "TIMEOUT": {
+      "title": "Tiempo de detección agotado",
+      "message": "La detección tardó demasiado (>15s). Su red puede ser lenta o estar bloqueando la prueba.",
+      "tips": [
+        "Su conexión de red puede ser lenta o inestable",
+        "Intente cerrar aplicaciones que consumen mucho ancho de banda y vuelva a intentarlo",
+        "Cambie a una conexión de red más estable"
+      ]
+    },
+    "STUN_UNREACHABLE": {
+      "title": "Servidores de detección inaccesibles",
+      "message": "No se puede conectar a los servidores de detección. Verifique la configuración del firewall o pruebe una red diferente.",
+      "tips": [
+        "Verifique si su firewall está bloqueando el tráfico UDP en el puerto 3478",
+        "Intente conectarse desde una red diferente (punto de acceso móvil, WiFi diferente)",
+        "Contacte a su administrador de red si está en una red corporativa"
+      ]
+    },
+    "BROWSER_UNSUPPORTED": {
+      "title": "Navegador no compatible",
+      "message": "Su navegador no admite la detección de NAT. Use Chrome, Firefox, Safari o Edge.",
+      "tips": [
+        "Use un navegador moderno (Chrome 28+, Firefox 22+, Safari 11+, Edge 79+)",
+        "Actualice su navegador a la última versión",
+        "Habilite WebRTC en la configuración del navegador si está deshabilitado"
+      ]
+    },
+    "PERMISSION_DENIED": {
+      "title": "Permiso denegado",
+      "message": "Permiso de red denegado. Por favor permita el acceso e intente nuevamente.",
+      "tips": [
+        "Permita los permisos de red cuando su navegador lo solicite",
+        "Verifique la configuración de privacidad del navegador para los permisos de WebRTC"
+      ]
+    },
+    "UNKNOWN": {
+      "title": "Error inesperado",
+      "message": "Ocurrió un error inesperado durante la detección.",
+      "tips": [
+        "Actualice la página e intente nuevamente",
+        "Borre la caché y las cookies del navegador",
+        "Intente usar un navegador diferente"
+      ]
+    }
+  },
+  "NATTypes": {
+    "CONE_NAT": {
+      "name": "Cone NAT",
+      "definition": "Your NAT uses consistent port mapping. Includes Full Cone, Restricted Cone, or Port-Restricted Cone NAT. Good for P2P and gaming.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "Cone NAT assigns the same external IP:port for all destinations. Browser APIs cannot distinguish between subtypes.",
+      "exampleScenarios": [
+        "Gaming: Works well for most games.",
+        "P2P: Good connectivity.",
+        "Video Calls: Reliable connections.",
+        "Remote Access: VPN clients and SSH connections work reliably through NAT traversal."
+      ],
+      "troubleshootingTips": [
+        "Enable UPnP on your router.",
+        "Configure port forwarding if needed.",
+        "If some P2P connections fail, ensure your firewall allows bidirectional UDP traffic.",
+        "Consider using IPv6 if available to bypass NAT entirely for supported applications."
+      ],
+      "comparison": "Cone NAT uses consistent mapping, unlike Symmetric NAT."
+    },
+    "FULL_CONE": {
+      "name": "NAT de cono completo",
+      "definition": "El tipo de NAT más permisivo. Una vez que una dirección interna se asigna a una dirección externa y un puerto, cualquier host externo puede enviar paquetes a esa asignación. Esto permite la conectividad más fácil para aplicaciones peer-to-peer.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "El NAT de cono completo crea un enlace entre interno (IP privada:puerto) y externo (IP pública:puerto) que permanece constante. Una vez establecido, el enrutador NAT permite a CUALQUIER fuente externa enviar paquetes a la IP pública:puerto, que luego se reenvían a la dirección interna. El mapeo persiste durante la duración de la sesión.",
+      "exampleScenarios": [
+        "Juegos: Puedes alojar servidores de juegos multijugador a los que tus amigos pueden unirse directamente sin reenvío de puertos.",
+        "Compartir archivos P2P: Los clientes BitTorrent alcanzan velocidades máximas con conexiones directas entre pares.",
+        "Videollamadas: Las aplicaciones WebRTC establecen conexiones peer-to-peer sin servidores de retransmisión."
+      ],
+      "troubleshootingTips": [
+        "Este es el mejor tipo de NAT para conectividad. No se necesitan cambios.",
+        "Si experimenta problemas, verifique que UPnP esté habilitado en su enrutador para el mapeo automático de puertos.",
+        "Considere el mapeo de puertos estático en la configuración del enrutador para aplicaciones críticas (juegos, servidores)."
+      ],
+      "comparison": "El NAT de cono completo es más permisivo que el Cono Restringido (que filtra por IP de origen) y mucho mejor que el NAT Simétrico (que cambia las asignaciones por destino)."
+    },
+    "RESTRICTED_CONE": {
+      "name": "NAT de cono restringido",
+      "definition": "Un tipo de NAT moderadamente permisivo. Una vez que una dirección interna envía datos a una IP externa, esa IP externa (pero desde cualquier puerto) puede enviar datos de vuelta. Más restrictivo que el Cono Completo pero aún permite buena conectividad P2P.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "El NAT de cono restringido crea un enlace que filtra los paquetes entrantes por dirección IP de origen. Si su dispositivo (192.168.1.100:5000) envía un paquete al Servidor A (1.2.3.4:80), el NAT crea un mapeo. El Servidor A puede responder desde CUALQUIER puerto, pero solo se permiten paquetes de la IP 1.2.3.4.",
+      "exampleScenarios": [
+        "Juegos: La mayoría de los juegos multijugador funcionan bien. Alojar servidores requiere que el servidor de juegos responda desde la misma IP a la que te conectaste.",
+        "Compartir archivos P2P: BitTorrent funciona bien ya que los pares intercambian direcciones IP a través de rastreadores antes de conectarse.",
+        "Videollamadas: Funciona bien para la mayoría de las aplicaciones. Algunos cortafuegos corporativos pueden causar problemas."
+      ],
+      "troubleshootingTips": [
+        "Este tipo de NAT funciona bien para la mayoría de las aplicaciones. Si experimenta problemas, intente habilitar UPnP en su enrutador.",
+        "Para alojar servidores de juegos, configure el reenvío de puertos estático para los puertos específicos del juego.",
+        "Si falla la conectividad, verifique si su aplicación requiere NAT de Cono Completo (raro)."
+      ],
+      "comparison": "El NAT de Cono Restringido agrega filtrado basado en IP en comparación con el Cono Completo, pero es mucho mejor que el NAT Simétrico que crea nuevas asignaciones por destino."
+    },
+    "PORT_RESTRICTED_CONE": {
+      "name": "NAT de cono restringido por puerto",
+      "definition": "Más restrictivo que el Cono Restringido. Solo permite tráfico de retorno desde la combinación exacta IP:puerto que se contactó originalmente. Requiere que las aplicaciones usen técnicas de travesía NAT como STUN.",
+      "impactSummary": {
+        "gaming": "fair",
+        "p2p": "fair",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "El NAT de cono restringido por puerto filtra los paquetes entrantes tanto por IP de origen como por puerto de origen. Si su dispositivo envía al Servidor A (1.2.3.4:80), SOLO se permiten paquetes desde exactamente 1.2.3.4:80. Una respuesta desde 1.2.3.4:443 sería bloqueada. Esto requiere coordinación precisa para conexiones P2P.",
+      "exampleScenarios": [
+        "Juegos: Funciona para la mayoría de los sistemas de emparejamiento. Alojar servidores puede requerir reenvío de puertos manual.",
+        "Compartir archivos P2P: BitTorrent funciona pero puede tener conectividad reducida en comparación con el NAT de Cono Completo.",
+        "Videollamadas: La mayoría de las aplicaciones modernas (Zoom, Teams, Meet) manejan esto automáticamente usando servidores STUN/TURN."
+      ],
+      "troubleshootingTips": [
+        "Habilite UPnP/NAT-PMP en su enrutador para permitir que las aplicaciones configuren asignaciones de puertos automáticamente.",
+        "Para servidores de juegos, configure el reenvío de puertos estático con rangos de puertos específicos en la configuración de su enrutador.",
+        "Considere actualizar el firmware del enrutador para admitir NAT de Cono Completo o Cono Restringido si está disponible."
+      ],
+      "comparison": "El Cono Restringido por Puerto agrega filtrado a nivel de puerto además del filtrado de IP del Cono Restringido. Más seguro pero requiere travesía NAT para aplicaciones P2P."
+    },
+    "SYMMETRIC": {
+      "name": "NAT simétrico",
+      "definition": "El tipo de NAT más restrictivo. Crea una asignación única para cada combinación de IP y puerto de destino. Los hosts externos no pueden predecir el puerto público, lo que dificulta mucho las conexiones peer-to-peer sin servidores de retransmisión.",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "El NAT simétrico asigna una asignación diferente de IP:puerto externa para CADA destino único. Si su dispositivo envía paquetes al Servidor A y al Servidor B, el NAT crea dos asignaciones separadas con puertos externos diferentes. Esto impide que otros pares predigan su punto final público, rompiendo las técnicas de perforación de agujeros utilizadas por las aplicaciones P2P.",
+      "exampleScenarios": [
+        "Juegos: No puede alojar servidores. El emparejamiento puede fallar o requerir servidores de retransmisión (mayor latencia).",
+        "Compartir archivos P2P: BitTorrent depende de rastreador/DHT pero no puede aceptar conexiones entrantes (velocidades más lentas).",
+        "Videollamadas: La mayoría de las aplicaciones (Zoom, Teams, WhatsApp) funcionan a través de servidores de retransmisión TURN, aumentando la latencia."
+      ],
+      "troubleshootingTips": [
+        "Contacte al ISP: El NAT simétrico a menudo es impuesto por operadores móviles (CGNAT). Solicite una dirección IPv4 pública si está disponible.",
+        "Use VPN: Una VPN con reenvío de puertos puede eludir las restricciones de NAT simétrico para aplicaciones específicas.",
+        "IPv6: Si su ISP admite IPv6, habilítelo para eludir completamente NAT (requiere aplicaciones compatibles con IPv6)."
+      ],
+      "comparison": "El NAT simétrico es lo opuesto al NAT de Cono Completo. Mientras que el Cono Completo permite que cualquiera se conecte, el Simétrico crea asignaciones únicas por destino, impidiendo la conectividad P2P directa."
+    },
+    "NO_NAT": {
+      "name": "Sin NAT (Conexión directa)",
+      "definition": "Su dispositivo tiene una dirección IP pública y está conectado directamente a Internet sin ninguna traducción NAT. Esto proporciona la mejor conectividad posible para todas las aplicaciones, pero puede exponer su dispositivo al acceso directo a Internet.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "Sin NAT, la dirección IP de su dispositivo es enrutable globalmente en Internet. No hay capa de traducción, por lo que las conexiones entrantes pueden alcanzar su dispositivo directamente en cualquier puerto. Esto es ideal para servidores y aplicaciones P2P, pero requiere una configuración de firewall adecuada para la seguridad.",
+      "exampleScenarios": [
+        "Juegos: Perfecto para alojar servidores de juegos. No se necesita reenvío de puertos ni configuración NAT.",
+        "Compartir archivos P2P: Máxima conectividad y velocidades. Puede sembrar y descargar simultáneamente.",
+        "Acceso remoto: Puede ejecutar SSH, servidores web o servidores VPN sin reenvío de puertos."
+      ],
+      "troubleshootingTips": [
+        "IMPORTANTE: Habilite un firewall en su dispositivo/enrutador para protegerse contra accesos no autorizados.",
+        "Solo abra puertos para servicios que realmente use. Cierre todos los puertos innecesarios.",
+        "Considere usar un firewall de hardware o enrutador frente a su dispositivo para seguridad adicional."
+      ],
+      "comparison": "Sin NAT proporciona la mejor conectividad pero requiere configuración de seguridad manual. NAT proporciona seguridad automática (aunque imperfecta) mediante oscuridad."
+    },
+    "MULTIPLE_LAYERS": {
+      "name": "Múltiples capas de NAT",
+      "definition": "Está detrás de múltiples dispositivos NAT (p. ej., NAT de grado de operador + enrutador doméstico). Esto crea problemas de conectividad compuestos, ya que cada capa traduce direcciones de forma independiente. Típico en redes móviles y algunos ISP.",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "Las múltiples capas de NAT ocurren cuando su ISP usa NAT de grado de operador (CGNAT, RFC 6598) además del NAT de su enrutador doméstico. La IP privada de su dispositivo (192.168.x.x) es traducida por su enrutador a una IP CGNAT (100.64.x.x), que luego es traducida nuevamente por el ISP a una IP pública. Esta doble traducción rompe la mayoría de las técnicas de travesía NAT.",
+      "exampleScenarios": [
+        "Juegos: No puede alojar servidores. Incluso las conexiones de cliente pueden fallar para juegos que requieren tipos específicos de NAT.",
+        "Compartir archivos P2P: Severamente limitado. Solo puede descargar de pares, no puede sembrar o cargar efectivamente.",
+        "Acceso remoto: No puede exponer servicios (SSH, servidor web) sin soluciones de tunelización complejas (ngrok, Tailscale)."
+      ],
+      "troubleshootingTips": [
+        "Solicite IP pública al ISP: Algunos ISP ofrecen direcciones IPv4 públicas por una tarifa (elimina la capa CGNAT).",
+        "Use IPv6: Habilite IPv6 en su enrutador y dispositivos para eludir completamente NAT (si el ISP admite IPv6 nativo).",
+        "Servicio VPN o de tunelización: Use Tailscale, ZeroTier o ngrok para exponer servicios a través de túneles cifrados."
+      ],
+      "comparison": "Las múltiples capas de NAT combinan los peores aspectos del NAT simétrico con complejidad adicional. A diferencia del NAT de una sola capa, no puede configurar su enrutador doméstico para mejorar la conectividad."
+    }
+  },
+  "ImpactRatings": {
+    "gaming": "Juegos",
+    "p2p": "Compartir archivos P2P",
+    "videoCalls": "Videollamadas",
+    "remoteAccess": "Acceso remoto",
+    "good": "Excelente",
+    "fair": "Moderado",
+    "poor": "Limitado"
+  }
+}

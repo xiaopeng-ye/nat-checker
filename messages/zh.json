@@ -1,0 +1,256 @@
+{
+  "UIStrings": {
+    "appTitle": "NAT 类型检测器",
+    "appDescription": "发现您网络的 NAT 类型,了解它如何影响游戏、P2P 应用和连接性。",
+    "privacyNote": "使用 RFC 5780 服务器端检测提供精确的 NAT 类型分类。",
+    "detectingNATType": "正在检测 NAT 类型",
+    "analyzingNetwork": "正在使用 STUN 服务器分析您的网络配置...",
+    "gatheringICECandidates": "正在收集 ICE 候选",
+    "detectionTimeInfo": "这通常需要 3-10 秒。最大等待时间:15 秒。",
+    "startDetection": "开始检测",
+    "retestNATType": "重新测试 NAT 类型",
+    "readyToDetect": "准备检测您的 NAT 类型",
+    "footerInfo": "此工具使用 RFC 5780 高级检测协议,能精确区分完全锥型、受限锥型和端口受限锥型 NAT。",
+    "detectionComplete": "检测完成",
+    "natTypeIdentified": "您的 NAT 类型已成功识别",
+    "natTypeLabel": "NAT 类型",
+    "publicIPAddress": "您的公共 IP 地址",
+    "cgnatDetected": "检测到 CGNAT（RFC 6598）- 可能影响连接",
+    "detectionTime": "检测时间",
+    "stunServerUsed": "使用的 STUN 服务器",
+    "stunServer": "STUN 服务器",
+    "lastTested": "最后测试时间",
+    "advancedDetails": "高级详细信息",
+    "applicationImpact": "应用影响",
+    "learnMore": "了解更多",
+    "hideAdditionalInfo": "隐藏其他信息",
+    "showAdditionalInfo": "显示其他信息",
+    "technicalDetails": "技术细节",
+    "realWorldExamples": "真实世界示例",
+    "troubleshootingTips": "故障排除技巧",
+    "comparison": "比较",
+    "impactExcellent": "优秀",
+    "impactModerate": "中等",
+    "impactLimited": "受限",
+    "gaming": "游戏",
+    "p2pFileSharing": "P2P 文件共享",
+    "videoCalls": "视频通话",
+    "remoteAccess": "远程访问",
+    "viewAllNATTypes": "查看所有 NAT 类型",
+    "otherNATTypes": "NAT 类型",
+    "otherNATTypesDescription": "了解不同的 NAT 类型及其对连接的影响。"
+  },
+  "ErrorMessages": {
+    "TIMEOUT": {
+      "title": "检测超时",
+      "message": "检测时间过长(>15秒)。您的网络可能较慢或阻止了测试。",
+      "tips": [
+        "您的网络连接可能较慢或不稳定",
+        "尝试关闭占用带宽的应用程序并重试",
+        "切换到更稳定的网络连接"
+      ]
+    },
+    "STUN_UNREACHABLE": {
+      "title": "无法访问检测服务器",
+      "message": "无法连接到检测服务器。请检查防火墙设置或尝试其他网络。",
+      "tips": [
+        "检查防火墙是否阻止了 UDP 端口 3478 的流量",
+        "尝试从其他网络连接(移动热点、其他 WiFi)",
+        "如果在公司网络中,请联系网络管理员"
+      ]
+    },
+    "BROWSER_UNSUPPORTED": {
+      "title": "浏览器不支持",
+      "message": "您的浏览器不支持 NAT 检测。请使用 Chrome、Firefox、Safari 或 Edge。",
+      "tips": [
+        "使用现代浏览器(Chrome 28+、Firefox 22+、Safari 11+、Edge 79+)",
+        "将浏览器更新到最新版本",
+        "如果已禁用,请在浏览器设置中启用 WebRTC"
+      ]
+    },
+    "PERMISSION_DENIED": {
+      "title": "权限被拒绝",
+      "message": "网络权限被拒绝。请允许访问并重试。",
+      "tips": [
+        "在浏览器提示时允许网络权限",
+        "检查浏览器隐私设置中的 WebRTC 权限"
+      ]
+    },
+    "UNKNOWN": {
+      "title": "意外错误",
+      "message": "检测过程中发生意外错误。",
+      "tips": [
+        "刷新页面并重试",
+        "清除浏览器缓存和 Cookie",
+        "尝试使用其他浏览器"
+      ]
+    }
+  },
+  "NATTypes": {
+    "CONE_NAT": {
+      "name": "锥型 NAT",
+      "definition": "您的 NAT 对不同目标使用一致的端口映射。这包括完全锥型、地址限制锥型或端口限制锥型 NAT - 由于浏览器限制无法区分这些子类型。适合 P2P 应用和游戏。",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "锥型 NAT(端点独立映射)为从同一内部套接字联系的所有目标分配相同的外部 IP:端口。这种一致的映射使 NAT 穿透技术(STUN、ICE 打洞)能够可靠工作。确切的子类型(完全/限制/端口限制)取决于过滤规则,浏览器 API 无法检测。",
+      "exampleScenarios": [
+        "游戏:大多数多人游戏运行良好。可以通过 UPnP 或端口转发托管服务器。",
+        "P2P 文件共享:BitTorrent 和类似应用程序通过直接对等连接实现良好速度。",
+        "视频通话:WebRTC 应用程序(Zoom、Teams、Meet)成功建立点对点连接。",
+        "远程访问:VPN 客户端和 SSH 连接通过 NAT 穿透可靠工作。"
+      ],
+      "troubleshootingTips": [
+        "在路由器上启用 UPnP/NAT-PMP 以允许应用程序自动端口映射。",
+        "要托管游戏服务器,请在路由器设置中配置静态端口转发。",
+        "如果某些 P2P 连接失败,请确保防火墙允许双向 UDP 流量。",
+        "如果可用,考虑使用 IPv6 完全绕过 NAT 以支持的应用程序。"
+      ],
+      "comparison": "锥型 NAT 提供一致的外部端口映射(适合 P2P),不同于对称型 NAT 为每个目标创建不同映射(破坏 P2P)。子类型检测需要浏览器中不可用的高级 STUN 服务器。"
+    },
+    "FULL_CONE": {
+      "name": "完全锥型 NAT",
+      "definition": "最宽松的 NAT 类型。一旦内部地址映射到外部地址和端口,任何外部主机都可以向该映射发送数据包。这使得点对点应用程序的连接最容易。",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "完全锥型 NAT 在内部(私有 IP:端口)和外部(公网 IP:端口)之间创建绑定,该绑定保持不变。一旦建立,NAT 路由器允许任何外部源向公网 IP:端口发送数据包,然后将其转发到内部地址。映射在会话期间保持不变。",
+      "exampleScenarios": [
+        "游戏:你可以托管多人游戏服务器,朋友可以直接加入而无需端口转发。",
+        "P2P 文件共享:BitTorrent 客户端通过直接对等连接实现最大速度。",
+        "视频通话:WebRTC 应用程序无需中继服务器即可建立点对点连接。"
+      ],
+      "troubleshootingTips": [
+        "这是连接性最好的 NAT 类型。无需更改。",
+        "如果遇到问题,请验证路由器上启用了 UPnP 以进行自动端口映射。",
+        "考虑在路由器设置中为关键应用程序(游戏、服务器)配置静态端口映射。"
+      ],
+      "comparison": "完全锥型 NAT 比受限锥型(按源 IP 过滤)更宽松,比对称型 NAT(每个目的地更改映射)好得多。"
+    },
+    "RESTRICTED_CONE": {
+      "name": "受限锥型 NAT",
+      "definition": "中等宽松的 NAT 类型。一旦内部地址向外部 IP 发送数据,该外部 IP(但来自它的任何端口)可以发回数据。比完全锥型更严格,但仍然允许良好的 P2P 连接。",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "受限锥型 NAT 创建按源 IP 地址过滤传入数据包的绑定。如果你的设备(192.168.1.100:5000)向服务器 A(1.2.3.4:80)发送数据包,NAT 会创建映射。服务器 A 可以从任何端口响应,但只允许来自 IP 1.2.3.4 的数据包通过。",
+      "exampleScenarios": [
+        "游戏:大多数多人游戏运行良好。托管服务器需要游戏服务器从你连接的同一 IP 响应。",
+        "P2P 文件共享:BitTorrent 运行良好,因为对等方在连接前通过跟踪器交换 IP 地址。",
+        "视频通话:大多数应用程序运行良好。一些企业防火墙可能会导致问题。"
+      ],
+      "troubleshootingTips": [
+        "此 NAT 类型适用于大多数应用程序。如果遇到问题,请尝试在路由器上启用 UPnP。",
+        "对于托管游戏服务器,为特定游戏端口配置静态端口转发。",
+        "如果连接失败,请检查你的应用程序是否需要完全锥型 NAT(罕见)。"
+      ],
+      "comparison": "与完全锥型相比,受限锥型 NAT 添加了基于 IP 的过滤,但比对称型 NAT 好得多,后者为每个目的地创建新映射。"
+    },
+    "PORT_RESTRICTED_CONE": {
+      "name": "端口受限锥型 NAT",
+      "definition": "比受限锥型更严格。只允许来自最初联系的确切 IP:端口组合的返回流量。需要应用程序使用 STUN 等 NAT 穿透技术。",
+      "impactSummary": {
+        "gaming": "fair",
+        "p2p": "fair",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "端口受限锥型 NAT 通过源 IP 和源端口过滤传入数据包。如果你的设备发送到服务器 A(1.2.3.4:80),只允许来自确切的 1.2.3.4:80 的数据包返回。来自 1.2.3.4:443 的响应将被阻止。这需要 P2P 连接的精确协调。",
+      "exampleScenarios": [
+        "游戏:适用于大多数匹配系统。托管服务器可能需要手动端口转发。",
+        "P2P 文件共享:BitTorrent 可以工作,但与完全锥型 NAT 相比连接性可能降低。",
+        "视频通话:大多数现代应用(Zoom、Teams、Meet)使用 STUN/TURN 服务器自动处理。"
+      ],
+      "troubleshootingTips": [
+        "在路由器上启用 UPnP/NAT-PMP 以允许应用程序自动配置端口映射。",
+        "对于游戏服务器,在路由器设置中使用特定端口范围配置静态端口转发。",
+        "如果可用,考虑升级路由器固件以支持完全锥型或受限锥型 NAT。"
+      ],
+      "comparison": "端口受限锥型在受限锥型的 IP 过滤基础上添加了端口级过滤。更安全但需要 P2P 应用程序进行 NAT 穿透。"
+    },
+    "SYMMETRIC": {
+      "name": "对称型 NAT",
+      "definition": "最严格的 NAT 类型。为每个目标 IP 和端口组合创建唯一映射。外部主机无法预测公共端口,如果没有中继服务器,点对点连接非常困难。",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "对称型 NAT 为每个唯一目标分配不同的外部 IP:端口映射。如果你的设备向服务器 A 和服务器 B 发送数据包,NAT 会创建两个具有不同外部端口的独立映射。这会阻止其他对等方预测你的公共端点,破坏 P2P 应用程序使用的打洞技术。",
+      "exampleScenarios": [
+        "游戏:无法托管服务器。匹配可能失败或需要中继服务器(更高延迟)。",
+        "P2P 文件共享:BitTorrent 依赖跟踪器/DHT,但无法接受传入连接(速度较慢)。",
+        "视频通话:大多数应用(Zoom、Teams、WhatsApp)通过 TURN 中继服务器工作,增加延迟。"
+      ],
+      "troubleshootingTips": [
+        "联系 ISP:对称型 NAT 通常由移动运营商(CGNAT)强制实施。如果可用,请求公共 IPv4 地址。",
+        "使用 VPN:具有端口转发功能的 VPN 可以绕过对称型 NAT 对特定应用程序的限制。",
+        "IPv6:如果你的 ISP 支持 IPv6,启用它可以完全绕过 NAT(需要支持 IPv6 的应用程序)。"
+      ],
+      "comparison": "对称型 NAT 与完全锥型 NAT 相反。虽然完全锥型允许任何人连接,但对称型为每个目的地创建唯一映射,阻止直接 P2P 连接。"
+    },
+    "NO_NAT": {
+      "name": "无 NAT(直接连接)",
+      "definition": "你的设备拥有公共 IP 地址,直接连接到互联网,无需任何 NAT 转换。这为所有应用程序提供最佳连接性,但可能使你的设备暴露于直接的互联网访问。",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "在无 NAT 的情况下,你的设备 IP 地址在互联网上全局可路由。没有转换层,因此传入连接可以在任何端口直接访问你的设备。这对服务器和 P2P 应用程序是理想的,但需要适当的防火墙配置以确保安全。",
+      "exampleScenarios": [
+        "游戏:非常适合托管游戏服务器。无需端口转发或 NAT 配置。",
+        "P2P 文件共享:最大连接性和速度。可以同时做种和下载。",
+        "远程访问:可以运行 SSH、Web 服务器或 VPN 服务器,无需端口转发。"
+      ],
+      "troubleshootingTips": [
+        "重要:在设备/路由器上启用防火墙以防止未经授权的访问。",
+        "只为你实际使用的服务打开端口。关闭所有不必要的端口。",
+        "考虑在设备前使用硬件防火墙或路由器以获得额外的安全性。"
+      ],
+      "comparison": "无 NAT 提供最佳连接性,但需要手动安全配置。NAT 通过隐蔽性提供自动(尽管不完善)的安全性。"
+    },
+    "MULTIPLE_LAYERS": {
+      "name": "多层 NAT",
+      "definition": "你位于多个 NAT 设备之后(例如运营商级 NAT + 家庭路由器)。这会造成复合连接问题,因为每层都独立转换地址。在移动网络和某些 ISP 中很常见。",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "当你的 ISP 除了你的家庭路由器的 NAT 之外还使用运营商级 NAT(CGNAT,RFC 6598)时,就会出现多层 NAT。你设备的私有 IP(192.168.x.x)被路由器转换为 CGNAT IP(100.64.x.x),然后 ISP 再次将其转换为公共 IP。这种双重转换破坏了大多数 NAT 穿透技术。",
+      "exampleScenarios": [
+        "游戏:无法托管服务器。即使是客户端连接也可能对需要特定 NAT 类型的游戏失败。",
+        "P2P 文件共享:严重受限。只能从对等方下载,无法有效做种或上传。",
+        "远程访问:如果没有复杂的隧道解决方案(ngrok、Tailscale),无法暴露服务(SSH、Web 服务器)。"
+      ],
+      "troubleshootingTips": [
+        "向 ISP 请求公共 IP:一些 ISP 提供收费的公共 IPv4 地址(移除 CGNAT 层)。",
+        "使用 IPv6:在路由器和设备上启用 IPv6 以完全绕过 NAT(如果 ISP 支持原生 IPv6)。",
+        "VPN 或隧道服务:使用 Tailscale、ZeroTier 或 ngrok 通过加密隧道暴露服务。"
+      ],
+      "comparison": "多层 NAT 结合了对称型 NAT 的最坏方面和额外的复杂性。与单层 NAT 不同,你无法配置家庭路由器来改善连接性。"
+    }
+  },
+  "ImpactRatings": {
+    "gaming": "游戏",
+    "p2p": "P2P 文件共享",
+    "videoCalls": "视频通话",
+    "remoteAccess": "远程访问",
+    "good": "优秀",
+    "fair": "中等",
+    "poor": "受限"
+  }
+}
