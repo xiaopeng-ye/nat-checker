@@ -1,0 +1,256 @@
+{
+  "UIStrings": {
+    "appTitle": "NAT Type Checker",
+    "appDescription": "Discover your network's NAT type and learn how it affects gaming, P2P applications, and connectivity.",
+    "privacyNote": "Uses RFC 5780 server-side detection for precise NAT type classification.",
+    "detectingNATType": "Detecting NAT Type",
+    "analyzingNetwork": "Analyzing your network configuration using STUN servers...",
+    "gatheringICECandidates": "Gathering ICE candidates",
+    "detectionTimeInfo": "This usually takes 3-10 seconds. Maximum wait time: 15 seconds.",
+    "startDetection": "Start Detection",
+    "retestNATType": "Re-test NAT Type",
+    "readyToDetect": "Ready to detect your NAT type",
+    "footerInfo": "This tool uses RFC 5780 advanced detection protocol to accurately distinguish Full Cone, Restricted Cone, and Port-Restricted Cone NAT types.",
+    "detectionComplete": "Detection Complete",
+    "natTypeIdentified": "Your NAT type has been successfully identified",
+    "natTypeLabel": "NAT Type",
+    "publicIPAddress": "Your Public IP Address",
+    "cgnatDetected": "CGNAT detected (RFC 6598) - May affect connectivity",
+    "detectionTime": "Detection Time",
+    "stunServerUsed": "STUN Server Used",
+    "stunServer": "STUN Server",
+    "lastTested": "Last Tested",
+    "advancedDetails": "Advanced Details",
+    "applicationImpact": "Application Impact",
+    "learnMore": "Learn More",
+    "hideAdditionalInfo": "Hide additional information",
+    "showAdditionalInfo": "Show additional information",
+    "technicalDetails": "Technical Details",
+    "realWorldExamples": "Real-World Examples",
+    "troubleshootingTips": "Troubleshooting Tips",
+    "comparison": "Comparison",
+    "impactExcellent": "Excellent",
+    "impactModerate": "Moderate",
+    "impactLimited": "Limited",
+    "gaming": "Gaming",
+    "p2pFileSharing": "P2P File Sharing",
+    "videoCalls": "Video Calls",
+    "remoteAccess": "Remote Access",
+    "viewAllNATTypes": "View all NAT types",
+    "otherNATTypes": "Other NAT Types",
+    "otherNATTypesDescription": "Learn about different NAT types and how they affect connectivity."
+  },
+  "ErrorMessages": {
+    "TIMEOUT": {
+      "title": "Detection Timeout",
+      "message": "Detection took too long (>15s). Your network may be slow or blocking the test.",
+      "tips": [
+        "Your network connection might be slow or unstable",
+        "Try closing bandwidth-heavy applications and retry",
+        "Switch to a more stable network connection"
+      ]
+    },
+    "STUN_UNREACHABLE": {
+      "title": "Detection Servers Unreachable",
+      "message": "Unable to connect to detection servers. Check firewall settings or try a different network.",
+      "tips": [
+        "Check if your firewall is blocking UDP traffic on port 3478",
+        "Try connecting from a different network (mobile hotspot, different WiFi)",
+        "Contact your network administrator if on corporate network"
+      ]
+    },
+    "BROWSER_UNSUPPORTED": {
+      "title": "Browser Not Supported",
+      "message": "Your browser doesn't support NAT detection. Use Chrome, Firefox, Safari, or Edge.",
+      "tips": [
+        "Use a modern browser (Chrome 28+, Firefox 22+, Safari 11+, Edge 79+)",
+        "Update your browser to the latest version",
+        "Enable WebRTC in browser settings if disabled"
+      ]
+    },
+    "PERMISSION_DENIED": {
+      "title": "Permission Denied",
+      "message": "Network permission denied. Please allow access and try again.",
+      "tips": [
+        "Allow network permissions when prompted by your browser",
+        "Check browser privacy settings for WebRTC permissions"
+      ]
+    },
+    "UNKNOWN": {
+      "title": "Unexpected Error",
+      "message": "An unexpected error occurred during detection.",
+      "tips": [
+        "Refresh the page and try again",
+        "Clear browser cache and cookies",
+        "Try using a different browser"
+      ]
+    }
+  },
+  "NATTypes": {
+    "CONE_NAT": {
+      "name": "Cone NAT",
+      "definition": "Your NAT uses consistent port mapping across different destinations. This includes Full Cone, Restricted Cone, or Port-Restricted Cone NAT - browser limitations prevent distinguishing between these subtypes. Good for P2P applications and gaming.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "Cone NAT (Endpoint-Independent Mapping) assigns the same external IP:port for all destinations contacted from the same internal socket. This consistent mapping allows NAT traversal techniques (STUN, ICE hole-punching) to work reliably. The exact subtype (Full/Restricted/Port-Restricted) depends on filtering rules, which browser APIs cannot detect.",
+      "exampleScenarios": [
+        "Gaming: Most multiplayer games work well. Hosting servers possible with UPnP or port forwarding.",
+        "P2P File Sharing: BitTorrent and similar applications achieve good speeds with direct peer connections.",
+        "Video Calls: WebRTC applications (Zoom, Teams, Meet) establish peer-to-peer connections successfully.",
+        "Remote Access: VPN clients and SSH connections work reliably through NAT traversal."
+      ],
+      "troubleshootingTips": [
+        "Enable UPnP/NAT-PMP on your router for automatic port mapping by applications.",
+        "For hosting game servers, configure static port forwarding in router settings.",
+        "If some P2P connections fail, ensure your firewall allows bidirectional UDP traffic.",
+        "Consider using IPv6 if available to bypass NAT entirely for supported applications."
+      ],
+      "comparison": "Cone NAT provides consistent external port mapping (good for P2P), unlike Symmetric NAT which creates different mappings per destination (breaks P2P). Subtype detection requires advanced STUN servers not available in browsers."
+    },
+    "FULL_CONE": {
+      "name": "Full Cone NAT",
+      "definition": "The most permissive NAT type. Once an internal address is mapped to an external address and port, any external host can send packets to that mapping. This allows the easiest connectivity for peer-to-peer applications.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "Full Cone NAT creates a binding between internal (private IP:port) and external (public IP:port) that remains constant. Once established, the NAT router allows ANY external source to send packets to the public IP:port, which are then forwarded to the internal address. The mapping persists for the duration of the session.",
+      "exampleScenarios": [
+        "Gaming: You can host multiplayer game servers that friends can join directly without port forwarding.",
+        "P2P File Sharing: BitTorrent clients achieve maximum speeds with direct peer connections.",
+        "Video Calls: WebRTC applications establish peer-to-peer connections without relay servers."
+      ],
+      "troubleshootingTips": [
+        "This is the best NAT type for connectivity. No changes needed.",
+        "If experiencing issues, verify UPnP is enabled on your router for automatic port mapping.",
+        "Consider static port mapping in router settings for critical applications (gaming, servers)."
+      ],
+      "comparison": "Full Cone NAT is more permissive than Restricted Cone (which filters by source IP) and far better than Symmetric NAT (which changes mappings per destination)."
+    },
+    "RESTRICTED_CONE": {
+      "name": "Restricted Cone NAT",
+      "definition": "A moderately permissive NAT type. Once an internal address sends data to an external IP, that external IP (but any port from it) can send data back. More restrictive than Full Cone but still allows good P2P connectivity.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "Restricted Cone NAT creates a binding that filters incoming packets by source IP address. If your device (192.168.1.100:5000) sends a packet to Server A (1.2.3.4:80), the NAT creates a mapping. Server A can respond from ANY port, but only packets from IP 1.2.3.4 are allowed through.",
+      "exampleScenarios": [
+        "Gaming: Most multiplayer games work well. Hosting servers requires the game server to respond from the same IP you connected to.",
+        "P2P File Sharing: BitTorrent works well since peers exchange IP addresses through trackers before connecting.",
+        "Video Calls: Works well for most applications. Some corporate firewalls may cause issues."
+      ],
+      "troubleshootingTips": [
+        "This NAT type works well for most applications. If you experience issues, try enabling UPnP on your router.",
+        "For hosting game servers, configure static port forwarding for the specific game ports.",
+        "If connectivity fails, check if your application requires Full Cone NAT (rare)."
+      ],
+      "comparison": "Restricted Cone NAT adds IP-based filtering compared to Full Cone, but is much better than Symmetric NAT which creates new mappings per destination."
+    },
+    "PORT_RESTRICTED_CONE": {
+      "name": "Port-Restricted Cone NAT",
+      "definition": "More restrictive than Restricted Cone. Only allows return traffic from the exact IP:port combination that was originally contacted. Requires applications to use NAT traversal techniques like STUN.",
+      "impactSummary": {
+        "gaming": "fair",
+        "p2p": "fair",
+        "videoCalls": "good",
+        "remoteAccess": "fair"
+      },
+      "technicalDetails": "Port-Restricted Cone NAT filters incoming packets by BOTH source IP and source port. If your device sends to Server A (1.2.3.4:80), ONLY packets from exactly 1.2.3.4:80 are allowed back. A response from 1.2.3.4:443 would be blocked. This requires precise coordination for P2P connections.",
+      "exampleScenarios": [
+        "Gaming: Works for most matchmaking systems. Hosting servers may require manual port forwarding.",
+        "P2P File Sharing: BitTorrent works but may have reduced connectivity compared to Full Cone NAT.",
+        "Video Calls: Most modern apps (Zoom, Teams, Meet) handle this automatically using STUN/TURN servers."
+      ],
+      "troubleshootingTips": [
+        "Enable UPnP/NAT-PMP on your router to allow applications to configure port mappings automatically.",
+        "For gaming servers, configure static port forwarding with specific port ranges in your router settings.",
+        "Consider upgrading router firmware to support Full Cone or Restricted Cone NAT if available."
+      ],
+      "comparison": "Port-Restricted Cone adds port-level filtering on top of Restricted Cone's IP filtering. More secure but requires NAT traversal for P2P applications."
+    },
+    "SYMMETRIC": {
+      "name": "Symmetric NAT",
+      "definition": "The most restrictive NAT type. Creates a unique mapping for each destination IP and port combination. External hosts cannot predict the public port, making peer-to-peer connections very difficult without relay servers.",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "Symmetric NAT assigns a different external IP:port mapping for EACH unique destination. If your device sends packets to Server A and Server B, the NAT creates two separate mappings with different external ports. This prevents other peers from predicting your public endpoint, breaking hole-punching techniques used by P2P applications.",
+      "exampleScenarios": [
+        "Gaming: Cannot host servers. Matchmaking may fail or require relay servers (higher latency).",
+        "P2P File Sharing: BitTorrent relies on tracker/DHT but cannot accept incoming connections (slower speeds).",
+        "Video Calls: Most apps (Zoom, Teams, WhatsApp) work via TURN relay servers, increasing latency."
+      ],
+      "troubleshootingTips": [
+        "Contact ISP: Symmetric NAT is often imposed by mobile carriers (CGNAT). Request a public IPv4 address if available.",
+        "Use VPN: A VPN with port forwarding can bypass Symmetric NAT restrictions for specific applications.",
+        "IPv6: If your ISP supports IPv6, enable it to bypass NAT entirely (requires IPv6-capable applications)."
+      ],
+      "comparison": "Symmetric NAT is the opposite of Full Cone NAT. While Full Cone allows anyone to connect, Symmetric creates unique mappings per destination, preventing direct P2P connectivity."
+    },
+    "NO_NAT": {
+      "name": "No NAT (Direct Connection)",
+      "definition": "Your device has a public IP address and is directly connected to the internet without any NAT translation. This provides the best possible connectivity for all applications but may expose your device to direct internet access.",
+      "impactSummary": {
+        "gaming": "good",
+        "p2p": "good",
+        "videoCalls": "good",
+        "remoteAccess": "good"
+      },
+      "technicalDetails": "With No NAT, your device's IP address is globally routable on the internet. There is no translation layer, so incoming connections can reach your device directly on any port. This is ideal for servers and P2P applications but requires proper firewall configuration for security.",
+      "exampleScenarios": [
+        "Gaming: Perfect for hosting game servers. No port forwarding or NAT configuration needed.",
+        "P2P File Sharing: Maximum connectivity and speeds. Can seed and download simultaneously.",
+        "Remote Access: Can run SSH, web servers, or VPN servers without port forwarding."
+      ],
+      "troubleshootingTips": [
+        "IMPORTANT: Enable a firewall on your device/router to protect against unauthorized access.",
+        "Only open ports for services you actually use. Close all unnecessary ports.",
+        "Consider using a hardware firewall or router in front of your device for additional security."
+      ],
+      "comparison": "No NAT provides the best connectivity but requires manual security configuration. NAT provides automatic (though imperfect) security through obscurity."
+    },
+    "MULTIPLE_LAYERS": {
+      "name": "Multiple NAT Layers",
+      "definition": "You are behind multiple NAT devices (e.g., carrier-grade NAT + home router). This creates compounded connectivity issues, as each layer independently translates addresses. Typical in mobile networks and some ISPs.",
+      "impactSummary": {
+        "gaming": "poor",
+        "p2p": "poor",
+        "videoCalls": "fair",
+        "remoteAccess": "poor"
+      },
+      "technicalDetails": "Multiple NAT layers occur when your ISP uses Carrier-Grade NAT (CGNAT, RFC 6598) in addition to your home router's NAT. Your device's private IP (192.168.x.x) is translated by your router to a CGNAT IP (100.64.x.x), which is then translated again by the ISP to a public IP. This double-translation breaks most NAT traversal techniques.",
+      "exampleScenarios": [
+        "Gaming: Cannot host servers. Even client connections may fail for games requiring specific NAT types.",
+        "P2P File Sharing: Severely limited. Can only download from peers, cannot seed or upload effectively.",
+        "Remote Access: Cannot expose services (SSH, web server) without complex tunneling solutions (ngrok, Tailscale)."
+      ],
+      "troubleshootingTips": [
+        "Request Public IP from ISP: Some ISPs offer public IPv4 addresses for a fee (removes CGNAT layer).",
+        "Use IPv6: Enable IPv6 on your router and devices to bypass NAT entirely (if ISP supports native IPv6).",
+        "VPN or Tunneling Service: Use Tailscale, ZeroTier, or ngrok for exposing services through encrypted tunnels."
+      ],
+      "comparison": "Multiple NAT layers combine the worst aspects of Symmetric NAT with additional complexity. Unlike single-layer NAT, you cannot configure your home router to improve connectivity."
+    }
+  },
+  "ImpactRatings": {
+    "gaming": "Gaming",
+    "p2p": "P2P File Sharing",
+    "videoCalls": "Video Calls",
+    "remoteAccess": "Remote Access",
+    "good": "Excellent",
+    "fair": "Moderate",
+    "poor": "Limited"
+  }
+}

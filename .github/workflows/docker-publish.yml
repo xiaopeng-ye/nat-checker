@@ -1,0 +1,189 @@
+name: Docker Publish - NAT Checker
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Docker image tag (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+env:
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/nat-checker
+
+jobs:
+  # Optional: Test and lint job
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run linting
+        run: pnpm run lint
+
+      - name: Build application
+        run: pnpm run build
+
+  # Security scan job
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      # - name: Upload Trivy scan results
+      #   uses: github/codeql-action/upload-sarif@v4
+      #   if: always()
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
+
+  # Build and push Docker image
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    timeout-minutes: 90  # Multi-platform builds need more time
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for multi-arch builds
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --allow-insecure-entitlement security.insecure
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata and generate tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+            # For git tags (v1.2.3) - semantic versioning
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            # Latest tag for releases
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            # Custom tag from workflow input
+            type=raw,value=${{ github.event.inputs.tag }},enable=${{ github.event.inputs.tag != '' }}
+            # SHA-based tag for main branch builds (if enabled in the future)
+            type=sha,prefix=sha-,enable=${{ github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.title=NAT Checker
+            org.opencontainers.image.description=Client-side NAT type detection tool using WebRTC STUN protocol
+            org.opencontainers.image.vendor=NAT Checker Project
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=MIT
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            NODE_ENV=production
+            NEXT_TELEMETRY_DISABLED=1
+          provenance: true
+          sbom: true
+
+      - name: Generate deployment summary
+        run: |
+          echo "### 🐳 Docker Image Published Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** \`${{ env.DOCKER_IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Published Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Digest:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Supported Architectures:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`linux/amd64\` (Intel/AMD 64-bit)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`linux/arm64\` (ARM 64-bit)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Exposed Ports:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`3000\` - HTTP (Next.js web interface)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`3478/udp\` - STUN Server 1 (NAT detection)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`3479/udp\` - STUN Server 2 (NAT detection)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`3480/udp\` - STUN Server 3 (NAT detection)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Quick Start Commands:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Pull the image" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.DOCKER_IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Run with all ports exposed" >> $GITHUB_STEP_SUMMARY
+          echo "docker run -d \\" >> $GITHUB_STEP_SUMMARY
+          echo "  --name nat-checker \\" >> $GITHUB_STEP_SUMMARY
+          echo "  -p 3000:3000 \\" >> $GITHUB_STEP_SUMMARY
+          echo "  -p 3478:3478/udp \\" >> $GITHUB_STEP_SUMMARY
+          echo "  -p 3479:3479/udp \\" >> $GITHUB_STEP_SUMMARY
+          echo "  -p 3480:3480/udp \\" >> $GITHUB_STEP_SUMMARY
+          echo "  ${{ env.DOCKER_IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment Variables:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`NODE_ENV=production\` - Production mode" >> $GITHUB_STEP_SUMMARY
+          echo "- \`PORT=3000\` - HTTP port (default)" >> $GITHUB_STEP_SUMMARY
+          echo "- \`HOSTNAME=0.0.0.0\` - Bind to all interfaces" >> $GITHUB_STEP_SUMMARY
+          echo "- \`NEXT_TELEMETRY_DISABLED=1\` - Disable Next.js telemetry" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Health Check:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Endpoint: \`http://localhost:3000\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Interval: 30s" >> $GITHUB_STEP_SUMMARY
+          echo "- Timeout: 3s" >> $GITHUB_STEP_SUMMARY
+          echo "- Retries: 3" >> $GITHUB_STEP_SUMMARY

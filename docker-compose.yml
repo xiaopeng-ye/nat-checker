@@ -1,0 +1,31 @@
+services:
+  nat-checker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: xiaopengye/nat-checker:latest
+    container_name: nat-checker
+    restart: unless-stopped
+    ports:
+      # Next.js application
+      - "3000:3000"
+      # STUN servers (UDP)
+      - "3478:3478/udp"
+      - "3479:3479/udp"
+      - "3480:3480/udp"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    networks:
+      - nat-checker-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  nat-checker-network:
+    driver: bridge
