@@ -1,0 +1,21 @@
+services:
+  nat-checker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Build-time input, not a runtime env var: the site URL is baked into the
+      # prerendered HTML, sitemap.xml and robots.txt. Compose reads it from a
+      # local .env file, e.g. VITE_SITE_URL=https://nat-checker.kkcloud.org
+      args:
+        VITE_SITE_URL: ${VITE_SITE_URL:-https://nat-checker.kkcloud.org}
+    # image: xiaopengye/nat-checker:latest
+    container_name: nat-checker
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

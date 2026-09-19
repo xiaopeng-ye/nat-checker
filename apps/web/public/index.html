@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NAT Type Checker</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="alternate" hreflang="en" href="/en" />
+    <link rel="alternate" hreflang="zh" href="/zh" />
+    <link rel="alternate" hreflang="de" href="/de" />
+    <link rel="alternate" hreflang="es" href="/es" />
+    <link rel="alternate" hreflang="fr" href="/fr" />
+    <script>
+      // Static entry point: redirect "/" to the visitor's best-matching
+      // locale page. Mirrors the next-intl middleware behaviour of the
+      // previous Next.js app (Accept-Language detection), which is not
+      // possible on purely static hosting.
+      (function () {
+        var locales = ["en", "zh", "de", "es", "fr"];
+        var fallback = "en";
+        var preferred = (navigator.languages && navigator.languages.length
+          ? Array.prototype.slice.call(navigator.languages)
+          : [navigator.language || fallback]
+        );
+        var chosen = fallback;
+        for (var i = 0; i < preferred.length; i++) {
+          var tag = (preferred[i] || "").toLowerCase();
+          if (!tag) continue;
+          if (locales.indexOf(tag) !== -1) {
+            chosen = tag;
+            break;
+          }
+          var base = tag.split("-")[0];
+          if (locales.indexOf(base) !== -1) {
+            chosen = base;
+            break;
+          }
+        }
+        window.location.replace("/" + chosen);
+      })();
+    </script>
+    <noscript
+      ><meta http-equiv="refresh" content="0; url=/en"
+    /></noscript>
+  </head>
+  <body>
+    <noscript>
+      <p>
+        <a href="/en">English</a> · <a href="/zh">中文</a> ·
+        <a href="/de">Deutsch</a> · <a href="/es">Español</a> ·
+        <a href="/fr">Français</a>
+      </p>
+    </noscript>
+  </body>
+</html>

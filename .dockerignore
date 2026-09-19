@@ -1,0 +1,61 @@
+# Docker ignore patterns are matched against the path relative to the build
+# context, so a bare directory name only matches at the top level. Everything
+# below therefore uses the "**/" prefix — without it, the per-package
+# node_modules trees, dist folders and turbo caches of the host are copied into
+# the image.
+
+# Dependencies (installed inside the image from the lockfile)
+**/node_modules
+
+# Build output and caches (rebuilt inside the image)
+**/dist
+**/dist-ssr
+**/.turbo
+**/.tanstack
+**/.vinxi
+**/.output
+**/.wrangler
+**/coverage
+**/test-results
+
+# Local env files (VITE_SITE_URL is passed as a build arg instead)
+**/.env
+**/.env.*
+**/.envrc
+
+# Logs and debug output
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+
+# Caches
+**/.cache
+**/.parcel-cache
+**/.eslintcache
+**/.tsbuildinfo
+**/tmp
+**/temp
+
+# OS and editor files
+**/.DS_Store
+**/Thumbs.db
+**/.vscode
+**/.idea
+**/*.swp
+**/*.swo
+**/*~
+
+# Docs, CI and agent config (not needed in the image)
+README.md
+DEPLOYMENT.md
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+.github/
+.agents/
+**/.git
+
+# Vercel
+.vercel

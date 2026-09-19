@@ -1,0 +1,23 @@
+{
+  "name": "@workspace/nat-detection",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Browser-side NAT mapping-behavior detection via WebRTC ICE gathering (framework-agnostic).",
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-config": "latest",
+    "eslint": "^9",
+    "typescript": "^6",
+    "vitest": "^5.0.1"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
